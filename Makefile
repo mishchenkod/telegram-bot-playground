@@ -1,8 +1,8 @@
 build:
-	docker compose up --build -d --remove-orphans
+	docker-compose up --build -d --remove-orphans
 up:
-	docker compose up -d
+	docker-compose up -d
 down:
-	docker compose down
+	docker-compose down
 logs:
-	docker compose logs
+	docker-compose logs
