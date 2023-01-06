@@ -13,16 +13,16 @@ jobs:
     steps:
     - name: Deploy to Oracle Cloud
       uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_SECRET }}
-          port: ${{ secrets.SSH_PORT }}
-          script: |
-            cd ${{ secrets.SSH_PATH }}
-            export TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }}
-            git pull origin main
-            make down
-            make build
-            echo "Deleting old Docker images..."
-            docker image prune -a -f
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.SSH_SECRET }}
+        port: ${{ secrets.SSH_PORT }}
+        script: |
+          cd ${{ secrets.SSH_PATH }}
+          export TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }}
+          git pull origin main
+          make down
+          make build
+          echo "Deleting old Docker images..."
+          docker image prune -a -f
