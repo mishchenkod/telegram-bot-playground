@@ -11,7 +11,7 @@ logging.basicConfig(
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await context.bot.send_message(chat_id=update.effective_chat.id, text='I am bot!')
+    await context.bot.send_message(chat_id=update.effective_chat.id, text='Privet!')
 
 if __name__ == '__main__':
     application = ApplicationBuilder().token(
