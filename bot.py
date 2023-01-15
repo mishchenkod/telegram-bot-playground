@@ -9,20 +9,15 @@ logging.basicConfig(
     level=logging.INFO
 )
 
-
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await context.bot.send_message(chat_id=update.effective_chat.id, text='Privet!')
+logger = logging.getLogger("__name__")
 
 
-async def select_aboba(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user = update.effective_user
-    await context.bot.send_message(chat_id=update.effective_chat.id, text='@' + user.username)
+async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="Started!")
 
 
 if __name__ == '__main__':
     application = ApplicationBuilder().token(config.TELEGRAM_TOKEN).build()
-    start_handler = CommandHandler('start', start)
-    aboba_handler = CommandHandler('select_aboba', select_aboba)
+    start_handler = CommandHandler('start', echo)
     application.add_handler(start_handler)
-    application.add_handler(aboba_handler)
     application.run_polling()
