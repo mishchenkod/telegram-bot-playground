@@ -9,7 +9,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-    - name: Deploy to Oracle Cloud
+    - name: Deploy to OCI
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.SSH_HOST }}
@@ -18,7 +18,6 @@ jobs:
         port: ${{ secrets.SSH_PORT }}
         script: |
           cd ${{ secrets.SSH_PATH }}
-          export TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }}
           git pull origin main
           make down
           make build
