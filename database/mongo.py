@@ -1,7 +1,7 @@
 import logging
 import sys
 
-from motor.motor_asyncio import AsyncIOMotorClient
+from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection
 
 from config import config
 
@@ -11,34 +11,34 @@ class MongoCollection:
     def __init__(self, collection):
         self.collection = collection
 
-    async def read_document(self, document_id):
+    async def find(self, document_id):
         """
-        Read the document by document ID.
+        Find document by document ID.
         """
         return await self.collection.find_one({"_id": document_id})
 
-    async def update_document(self, document_id, updated_data):
+    async def update(self, document_id, document_data):
         """
-        Update (or create if not exists) document by document ID.
+        Update or create document by document ID.
         """
-        updated_data = {"$set": updated_data}
-        await self.collection.update_one({"_id": document_id}, updated_data, upsert=True)
+        document_data = {"$set": document_data}
+        await self.collection.update_one({"_id": document_id}, document_data, upsert=True)
 
-    async def delete_document(self, document_id):
+    async def delete(self, document_id):
         """
         Delete document by document ID.
         """
         await self.collection.delete_one({'_id': document_id})
 
-    async def total_documents(self):
+    async def count(self):
         """
-        Return total number of documents in this collection.
+        Get total number of documents in this collection.
         """
         return await self.collection.count_documents({})
 
     async def get_all_ids(self):
         """
-        Return list of all document IDs in this collection.
+        Get list of all document IDs in this collection.
         """
         return await self.collection.distinct("_id")
 
