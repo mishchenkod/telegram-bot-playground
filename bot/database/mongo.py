@@ -1,9 +1,8 @@
 import logging
 import sys
 
-from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection
-
 from config import config
+from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection
 
 
 class MongoCollection:
