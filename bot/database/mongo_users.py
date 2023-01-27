@@ -1,7 +1,8 @@
 from datetime import datetime, timezone
 
-from database import mongo
 from telegram import User
+
+from bot.database import mongo
 
 
 async def save_user(user: User):

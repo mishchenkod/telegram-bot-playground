@@ -1,7 +1,7 @@
 import logging
 import sys
 
-from config import config
+from bot.config import config
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection
 
 
