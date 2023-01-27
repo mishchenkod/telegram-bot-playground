@@ -4,8 +4,8 @@ from asyncio import get_event_loop, new_event_loop, set_event_loop
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
-from config import config
-from database import mongo, mongo_users
+from bot.config import config
+from bot.database import mongo, mongo_users
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
