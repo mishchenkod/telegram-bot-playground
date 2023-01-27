@@ -24,7 +24,7 @@ loop.run_until_complete((mongo.check_connection(config.MONGO_URI)))
 
 
 async def start_greetings(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await context.bot.send_message(chat_id=update.effective_chat.id, text='Я бот')
+    await context.bot.send_message(chat_id=update.effective_chat.id, text='Я бот после CI/CD')
 
 
 async def register_user(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

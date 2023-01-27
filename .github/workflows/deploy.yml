@@ -20,6 +20,6 @@ jobs:
           cd ${{ secrets.SSH_PATH }}
           git pull origin main
           make down
-          make build
+          make deploy
           echo "Deleting old Docker images..."
           docker image prune -a -f
