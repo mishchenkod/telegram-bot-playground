@@ -23,6 +23,7 @@ class PersonOfTheDayGame(Document):
     '''
     id: int
     players: List[PersonOfTheDayPlayer]
+    last_winner_id: Optional[int] = None
     last_play_date: datetime
     creation_date: datetime
 
