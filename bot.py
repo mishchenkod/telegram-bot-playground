@@ -39,13 +39,12 @@ async def get_game(chat_id: int) -> PersonOfTheDayGame:
 async def register_potd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
     chat = update.effective_chat
-
+    msg = ['Ты уже зарегистрирован в игре, иди нахуй!', 'Ты зарегистрирован в игре!']
     potd_game = await get_game(chat.id)
 
-    if await potd_game.add_player(user):
-        await context.bot.send_message(chat_id=update.effective_chat.id, text='Ты зарегистрирован в игре!')
-    else:
-        await update.message.reply_text(text='Ты уже зарегистрирован в игре, иди нахуй!')
+    result = await potd_game.add_player(user)
+
+    await update.message.reply_text(text=msg[int(result)])
 
 def players_to_str(list) -> str:
     return '\n'.join("{0}. {1} ({2})".format(idx + 1, p.id, p.get_name()) for idx, p in enumerate(list))

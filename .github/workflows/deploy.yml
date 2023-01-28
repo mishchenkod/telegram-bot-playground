@@ -21,5 +21,5 @@ jobs:
           git pull origin main
           make down
           make deploy
-          echo "Deleting old Docker images..."
-          docker image prune -a -f
+#          echo "Deleting old Docker images..."
+#          docker image prune -a -f
