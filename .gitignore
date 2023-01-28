@@ -1,6 +1,9 @@
 # Project intended files
 config.env
 
+# MongoDB data files
+mongo/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

@@ -5,20 +5,16 @@ from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection
 
 from bot.config import config
-from bot.models.chat_user import ChatUser
+from bot.database.potd import PersonOfTheDayGame
 
 
-async def check_connection(uri: str) -> None:
+async def initialize_database() -> None:
     try:
-        logging.info("MongoDB URI: " + uri)
-        mongodb = AsyncIOMotorClient(uri)
-        await mongodb.server_info()
+        logging.info("MongoDB URI: " + config.MONGO_URI)
+        client = AsyncIOMotorClient(config.MONGO_URI)
+        await client.server_info()
+        await init_beanie(database=client.bot, document_models=[PersonOfTheDayGame])
     except:
         logging.error(
             "Can't connect to MongoDB: invalid URI")
         sys.exit()
-
-
-async def initialize() -> None:
-    client = AsyncIOMotorClient(config.MONGO_URI)
-    await init_beanie(database=client.bot, document_models=[ChatUser])
