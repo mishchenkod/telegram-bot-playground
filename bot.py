@@ -34,10 +34,10 @@ async def register_potd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     user = update.effective_user
     chat = update.effective_chat
     potd_player: PersonOfTheDayPlayer = PersonOfTheDayPlayer(
-        user_id=user.id, username=user.username, first_name=user.first_name, last_name=user.last_name, wins_number=0)
+        id=user.id, username=user.username, first_name=user.first_name, last_name=user.last_name, wins_number=0)
     potd_game = await PersonOfTheDayGame.get(chat.id)
     if (potd_game):
-        if any(player.user_id == user.id for player in potd_game.players):
+        if any(player.id == user.id for player in potd_game.players):
             await update.message.reply_text(text='Ты уже зарегистрирован в игре, иди нахуй!')
         else:
             potd_game.players.append(potd_player)
