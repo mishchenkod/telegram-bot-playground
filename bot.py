@@ -47,12 +47,15 @@ async def register_potd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     else:
         await update.message.reply_text(text='Ты уже зарегистрирован в игре, иди нахуй!')
 
+def players_to_str(list) -> str:
+    return '\n'.join("{0}. {1} ({2})".format(idx + 1, p.id, p.get_name()) for idx, p in enumerate(list))
+
 async def list_players_for_game(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
     chat = update.effective_chat
     potd_game = await PersonOfTheDayGame.get(chat.id)
     if (potd_game):
-        await context.bot.send_message(chat_id=update.effective_chat.id, text='Участники игры в этом чате: ' + str(potd_game))
+        await context.bot.send_message(chat_id=update.effective_chat.id, text='Участники игры в этом чате:\n' + players_to_str(potd_game.get_player_list()))
     else:
         await context.bot.send_message(chat_id=update.effective_chat.id, text='В этом чате нет игры!')
 

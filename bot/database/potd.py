@@ -15,6 +15,16 @@ class PersonOfTheDayPlayer(BaseModel):
     last_name: Optional[str] = None
     wins_number: int
 
+    def get_name(self) -> str:
+        name = ""
+        if self.username:
+            name = self.username
+        else:
+            name = self.first_name
+            if self.last_name:
+                name += self.last_name
+        return name
+
 
 class PersonOfTheDayGame(Document):
     '''
