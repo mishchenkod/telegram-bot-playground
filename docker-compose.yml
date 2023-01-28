@@ -6,6 +6,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    links:
+      - mongo
 
   mongo:
     image: mongo:latest
@@ -17,7 +19,8 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - ./mongo/data/db:/data/db
+      - mongodata:/data/db
+      - mongodata:/data/configdb
 
   mongo-express:
     image: mongo-express:latest
@@ -28,8 +31,12 @@ services:
       - ME_CONFIG_MONGODB_URL=mongodb://mongo:mongo@mongo:27017/?authSource=admin
       - ME_CONFIG_BASICAUTH_USERNAME=mongo
       - ME_CONFIG_BASICAUTH_PASSWORD=mongo
-    links:
-      - mongo
     restart: unless-stopped
     ports:
       - "8081:8081"
+    links:
+      - mongo
+
+volumes:
+  mongodata:
+    driver: local
