@@ -29,24 +29,23 @@ loop.run_until_complete((initialize_database()))
 async def start_greetings(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await context.bot.send_message(chat_id=update.effective_chat.id, text='Я бот после CI/CD')
 
+async def get_game(chat_id: int) -> PersonOfTheDayGame:
+    potd_game = await PersonOfTheDayGame.get(chat_id)
+    if potd_game is None:
+        potd_game = PersonOfTheDayGame(id=chat_id, players=[], last_play_date=datetime.now(timezone.utc), creation_date=datetime.now(timezone.utc))
+
+    return potd_game
 
 async def register_potd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
     chat = update.effective_chat
-    potd_player: PersonOfTheDayPlayer = PersonOfTheDayPlayer(
-        id=user.id, username=user.username, first_name=user.first_name, last_name=user.last_name, wins_number=0)
-    potd_game = await PersonOfTheDayGame.get(chat.id)
-    if (potd_game):
-        if any(player.id == user.id for player in potd_game.players):
-            await update.message.reply_text(text='Ты уже зарегистрирован в игре, иди нахуй!')
-        else:
-            potd_game.players.append(potd_player)
-    else:
-        potd_game = PersonOfTheDayGame(id=chat.id, players=[potd_player], last_play_date=datetime.now(
-            timezone.utc), creation_date=datetime.now(timezone.utc))
-    await potd_game.save()
-    await context.bot.send_message(chat_id=update.effective_chat.id, text='Ты зарегистрирован в игре: ' + str(potd_game))
 
+    potd_game = await get_game(chat.id)
+
+    if await potd_game.add_player(user):
+        await context.bot.send_message(chat_id=update.effective_chat.id, text='Ты зарегистрирован в игре: ' + str(potd_game))
+    else:
+        await update.message.reply_text(text='Ты уже зарегистрирован в игре, иди нахуй!')
 
 async def list_players_for_game(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
