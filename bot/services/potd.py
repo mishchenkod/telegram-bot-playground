@@ -44,7 +44,7 @@ class PersonOfTheDayGame(Document):
         name = "potd"
 
 
-async def find_winner(game: PersonOfTheDayGame) -> PersonOfTheDayGame:
+async def find_winner(game: PersonOfTheDayGame) -> PersonOfTheDayPlayer:
     """
     Finds game winner and updates last played date.
     """
