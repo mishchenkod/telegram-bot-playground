@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 from typing import Iterable, List, Optional
 
 from beanie import Document
+from numpy import random
 from pydantic import BaseModel
 from telegram import User, helpers
 
@@ -43,6 +44,25 @@ class PersonOfTheDayGame(Document):
         name = "potd"
 
 
+async def find_winner(game: PersonOfTheDayGame) -> PersonOfTheDayGame:
+    """
+    Finds game winner and updates last played date.
+    """
+    winner = random.choice(game.players)
+    winner.wins_number += 1
+    game.last_winner_id = winner.id
+    game.last_play_date = datetime.now(timezone.utc)
+    await game.save()
+    return winner
+
+
+def get_last_winner(game: PersonOfTheDayGame) -> PersonOfTheDayPlayer:
+    """
+    Returns last winnner player.
+    """
+    return next((player for player in game.players if player.id == game.last_winner_id), None)
+
+
 def is_game_has_player(game: PersonOfTheDayGame, player_id: int) -> bool:
     """
     Returns true if player with the given ID is in the game, othewise false.
@@ -55,13 +75,6 @@ def is_game_played_today(game: PersonOfTheDayGame) -> bool:
     Returns true if game is already played today, othewise false.
     """
     return False if (game.last_play_date is None) else (game.last_play_date.date() == datetime.now(timezone.utc).date())
-
-
-def get_last_winner(game: PersonOfTheDayGame) -> PersonOfTheDayPlayer:
-    """
-    Returns last winnner player.
-    """
-    return next((player for player in game.players if player.id == game.last_winner_id), None)
 
 
 def format_players_to_html_list(players: Iterable[PersonOfTheDayPlayer]) -> str:

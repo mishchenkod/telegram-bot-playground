@@ -73,7 +73,7 @@ async def play_game(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             mention=potd.format_player_mention_html(last_winner))
         await context.bot.send_message(chat_id=chat.id, text=text, parse_mode=ParseMode.HTML)
     else:
-        winner = random.choice(game.players)
+        winner = await potd.find_winner(game)
         text = "Сегодня удачный день будет у {mention}! <b>Поздравляем счастливчика!</b>".format(
             mention=potd.format_player_mention_html(winner))
         await context.bot.send_message(chat_id=chat.id, text=text, parse_mode=ParseMode.HTML)
