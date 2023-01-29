@@ -1,3 +1,4 @@
+"""Person of the day game handlers: registration, run the game, player rankings and etc."""
 from datetime import datetime, timezone
 
 from telegram import Update
@@ -10,7 +11,8 @@ from bot.services.potd import PersonOfTheDayGame, PersonOfTheDayPlayer
 
 def validate_game(handler):
     """
-    Validates if game exists for the current chat. If not, then sends a message about no players registered.
+    Validates if game exists for the current chat.
+    Otherwise, sends a message about no players registered.
     """
 
     async def wrapped(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -47,7 +49,7 @@ async def register_player(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     await game.save()
     await context.bot.send_message(
         chat_id=chat.id,
-        text=_format_registered_message_html(game),
+        text=f"Ты зарегистрирован в игре! Участников игры в этом чате: <b>{len(game.players)}</b>",
         parse_mode=ParseMode.HTML,
     )
 
@@ -75,23 +77,15 @@ async def play_game(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     game = await PersonOfTheDayGame.get(chat.id)
     if potd.is_game_played_today(game):
         last_winner = potd.get_last_winner(game)
-        text = "Сегодня удача уже улыбнулась {mention}! <b>Хорошего дня!</b>".format(
-            mention=potd.format_player_mention_html(last_winner)
-        )
+        text = f"Сегодня удача уже улыбнулась {potd.format_player_mention_html(last_winner)}! \
+            <b>Хорошего дня!</b>"
         await context.bot.send_message(
             chat_id=chat.id, text=text, parse_mode=ParseMode.HTML
         )
     else:
         winner = await potd.find_winner(game)
-        text = "Сегодня удачный день будет у {mention}! <b>Поздравляем счастливчика!</b>".format(
-            mention=potd.format_player_mention_html(winner)
-        )
+        text = f"Сегодня удачный день будет у {potd.format_player_mention_html(winner)}! \
+            <b>Поздравляем счастливчика!</b>"
         await context.bot.send_message(
             chat_id=chat.id, text=text, parse_mode=ParseMode.HTML
         )
-
-
-def _format_registered_message_html(potd_game: PersonOfTheDayGame) -> str:
-    return "Ты зарегистрирован в игре! Участников игры в этом чате: <b>{players_number}</b>".format(
-        players_number=len(potd_game.players)
-    )

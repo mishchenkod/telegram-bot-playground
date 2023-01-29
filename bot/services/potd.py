@@ -1,3 +1,4 @@
+"""Person of the day game service"""
 from datetime import datetime, timezone
 from typing import Iterable, List, Optional
 
@@ -45,6 +46,8 @@ class PersonOfTheDayGame(Document):
     creation_date: datetime
 
     class Settings:
+        """Collection settings"""
+
         name = "potd"
 
 
@@ -95,11 +98,8 @@ def format_players_to_html_list(players: Iterable[PersonOfTheDayPlayer]) -> str:
     formatted_players = ["<b>Рейтинг счастливчиков:</b>\n"]
     for index, player in enumerate(sorted_players):
         formatted_players.append(
-            "{index}. {mention} ({wins_number} счастливых дней)\n".format(
-                index=index + 1,
-                mention=format_player_mention_html(player),
-                wins_number=player.wins_number,
-            )
+            f"{index + 1}. {format_player_mention_html(player)} \
+                ({player.wins_number} счастливых дней)\n"
         )
     return "".join(formatted_players)
 
