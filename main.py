@@ -28,6 +28,7 @@ def add_handlers(application) -> None:
         "register", potd_handler.register_player))
     application.add_handler(CommandHandler(
         "players", potd_handler.list_players))
+    application.add_handler(CommandHandler("play", potd_handler.play_game))
 
 
 if __name__ == '__main__':

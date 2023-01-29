@@ -36,7 +36,7 @@ class PersonOfTheDayGame(Document):
     id: int
     players: List[PersonOfTheDayPlayer]
     last_winner_id: Optional[int] = None
-    last_play_date: datetime
+    last_play_date: Optional[datetime] = None
     creation_date: datetime
 
     class Settings:
@@ -54,21 +54,29 @@ def is_game_played_today(game: PersonOfTheDayGame) -> bool:
     """
     Returns true if game is already played today, othewise false.
     """
-    return game.last_play_date.date() == datetime.now(timezone.utc).date()
+    return False if (game.last_play_date is None) else (game.last_play_date.date() == datetime.now(timezone.utc).date())
+
+
+def get_last_winner(game: PersonOfTheDayGame) -> PersonOfTheDayPlayer:
+    """
+    Returns last winnner player.
+    """
+    return next((player for player in game.players if player.id == game.last_winner_id), None)
 
 
 def format_players_to_html_list(players: Iterable[PersonOfTheDayPlayer]) -> str:
     """
-    Returns HTML-formatted numbered list of players.
+    Returns HTML-formatted numbered list of players sorted by wins number.
     """
-    formatted_players = ["<b>Зарегистрированные игроки:</b>\n"]
-    for index, player in enumerate(players):
-        formatted_players.append("{index}. {name}\n".format(
-            index=index+1, name=get_player_mention(player)))
+    sorted_players = sorted(players, key=lambda p: p.wins_number, reverse=True)
+    formatted_players = ["<b>Рейтинг счастливчиков:</b>\n"]
+    for index, player in enumerate(sorted_players):
+        formatted_players.append("{index}. {mention} ({wins_number} счастливых дней)\n".format(
+            index=index+1, mention=format_player_mention_html(player), wins_number=player.wins_number))
     return "".join(formatted_players)
 
 
-def get_player_mention(player: PersonOfTheDayPlayer) -> str:
+def format_player_mention_html(player: PersonOfTheDayPlayer) -> str:
     """
     Returns HTML-formatted Telegram mention.
     """
