@@ -44,7 +44,8 @@ async def register_player(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             PersonOfTheDayPlayer.from_telegram_user(user=user))
     await game.save()
     await context.bot.send_message(chat_id=chat.id,
-                                   text=_format_registered_message_html(game))
+                                   text=_format_registered_message_html(game),
+                                   parse_mode=ParseMode.HTML)
 
 
 @validate_game
@@ -80,5 +81,5 @@ async def play_game(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 def _format_registered_message_html(potd_game: PersonOfTheDayGame) -> str:
-    return "Ты зарегистрирован в игре! Участников игры в этом чате: {players_number}".format(
+    return "Ты зарегистрирован в игре! Участников игры в этом чате: <b>{players_number}</b>".format(
         players_number=len(potd_game.players))
