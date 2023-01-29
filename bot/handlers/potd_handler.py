@@ -78,8 +78,8 @@ async def play_game(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if potd.is_game_played_today(game):
         last_winner = potd.get_last_winner(game)
         text = (
-            f"Сегодня удача уже улыбнулась {potd.format_player_mention_html(last_winner)}!",
-            "<b>Хорошего дня!</b>",
+            f"Сегодня удача уже улыбнулась {potd.format_player_mention_html(last_winner)}! "
+            "<b>Хорошего дня!</b>"
         )
         await context.bot.send_message(
             chat_id=chat.id, text=text, parse_mode=ParseMode.HTML
@@ -87,8 +87,8 @@ async def play_game(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     else:
         winner = await potd.find_winner(game)
         text = (
-            f"Сегодня удачный день будет у {potd.format_player_mention_html(winner)}!",
-            "<b>Поздравляем счастливчика!</b>",
+            f"Сегодня удачный день будет у {potd.format_player_mention_html(winner)}! "
+            "<b>Поздравляем счастливчика!</b>"
         )
         await context.bot.send_message(
             chat_id=chat.id, text=text, parse_mode=ParseMode.HTML

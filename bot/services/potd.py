@@ -99,8 +99,8 @@ def format_players_to_html_list(players: Iterable[PersonOfTheDayPlayer]) -> str:
     for index, player in enumerate(sorted_players):
         formatted_players.append(
             (
-                f"{index + 1}. {format_player_mention_html(player)} ",
-                f"({player.wins_number} счастливых дней)\n",
+                f"{index + 1}. {format_player_mention_html(player)} "
+                f"({player.wins_number} счастливых дней)\n"
             )
         )
     return "".join(formatted_players)
