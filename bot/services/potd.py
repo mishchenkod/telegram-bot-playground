@@ -11,6 +11,7 @@ class PersonOfTheDayPlayer(BaseModel):
     """
     Person of the day game participant.
     """
+
     id: int
     username: Optional[str] = None
     first_name: Optional[str] = None
@@ -22,11 +23,13 @@ class PersonOfTheDayPlayer(BaseModel):
         """
         Creates player instance from Telegram user.
         """
-        return cls(id=user.id,
-                   username=user.username,
-                   first_name=user.first_name,
-                   last_name=user.last_name,
-                   wins_number=0)
+        return cls(
+            id=user.id,
+            username=user.username,
+            first_name=user.first_name,
+            last_name=user.last_name,
+            wins_number=0,
+        )
 
 
 class PersonOfTheDayGame(Document):
@@ -34,6 +37,7 @@ class PersonOfTheDayGame(Document):
     Person of the day game.
     ID is the Telegram chat ID, so only one game per chat allowed.
     """
+
     id: int
     players: List[PersonOfTheDayPlayer]
     last_winner_id: Optional[int] = None
@@ -60,7 +64,9 @@ def get_last_winner(game: PersonOfTheDayGame) -> PersonOfTheDayPlayer:
     """
     Returns last winnner player.
     """
-    return next((player for player in game.players if player.id == game.last_winner_id), None)
+    return next(
+        (player for player in game.players if player.id == game.last_winner_id), None
+    )
 
 
 def is_game_has_player(game: PersonOfTheDayGame, player_id: int) -> bool:
@@ -74,7 +80,11 @@ def is_game_played_today(game: PersonOfTheDayGame) -> bool:
     """
     Returns true if game is already played today, othewise false.
     """
-    return False if (game.last_play_date is None) else (game.last_play_date.date() == datetime.now(timezone.utc).date())
+    return (
+        False
+        if (game.last_play_date is None)
+        else (game.last_play_date.date() == datetime.now(timezone.utc).date())
+    )
 
 
 def format_players_to_html_list(players: Iterable[PersonOfTheDayPlayer]) -> str:
@@ -84,8 +94,13 @@ def format_players_to_html_list(players: Iterable[PersonOfTheDayPlayer]) -> str:
     sorted_players = sorted(players, key=lambda p: p.wins_number, reverse=True)
     formatted_players = ["<b>Рейтинг счастливчиков:</b>\n"]
     for index, player in enumerate(sorted_players):
-        formatted_players.append("{index}. {mention} ({wins_number} счастливых дней)\n".format(
-            index=index+1, mention=format_player_mention_html(player), wins_number=player.wins_number))
+        formatted_players.append(
+            "{index}. {mention} ({wins_number} счастливых дней)\n".format(
+                index=index + 1,
+                mention=format_player_mention_html(player),
+                wins_number=player.wins_number,
+            )
+        )
     return "".join(formatted_players)
 
 
