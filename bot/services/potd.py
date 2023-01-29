@@ -3,7 +3,7 @@ from typing import Iterable, List, Optional
 
 from beanie import Document
 from pydantic import BaseModel
-from telegram import User
+from telegram import User, helpers
 
 
 class PersonOfTheDayPlayer(BaseModel):
@@ -43,18 +43,11 @@ class PersonOfTheDayGame(Document):
         name = "potd"
 
 
-def get_player_name_for_mention(player: PersonOfTheDayPlayer) -> str:
-    """
-    Returns username for mention if exists, otherwise returns first name.
-    """
-    return player.username if player.username else player.first_name
-
-
-def is_game_has_player(game: PersonOfTheDayGame) -> bool:
+def is_game_has_player(game: PersonOfTheDayGame, player_id: int) -> bool:
     """
     Returns true if player with the given ID is in the game, othewise false.
     """
-    return any(player.id == id for player in game.players)
+    return any(player.id == player_id for player in game.players)
 
 
 def is_game_played_today(game: PersonOfTheDayGame) -> bool:
@@ -65,4 +58,25 @@ def is_game_played_today(game: PersonOfTheDayGame) -> bool:
 
 
 def format_players_to_html_list(players: Iterable[PersonOfTheDayPlayer]) -> str:
-    return ""
+    """
+    Returns HTML-formatted numbered list of players.
+    """
+    formatted_players = ["<b>Зарегистрированные игроки:</b>\n"]
+    for index, player in enumerate(players):
+        formatted_players.append("{index}. {name}\n".format(
+            index=index+1, name=get_player_mention(player)))
+    return "".join(formatted_players)
+
+
+def get_player_mention(player: PersonOfTheDayPlayer) -> str:
+    """
+    Returns HTML-formatted Telegram mention.
+    """
+    return helpers.mention_html(player.id, _get_player_name_for_mention(player))
+
+
+def _get_player_name_for_mention(player: PersonOfTheDayPlayer) -> str:
+    """
+    Returns username for mention if exists, otherwise returns first name.
+    """
+    return player.username if player.username else player.first_name

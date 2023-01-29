@@ -1,10 +1,11 @@
 import logging
 from asyncio import get_event_loop, new_event_loop, set_event_loop
 
-from telegram.ext import ApplicationBuilder
+from telegram.ext import ApplicationBuilder, CommandHandler
 
 from bot import config
-from bot.database import initialize_database
+from bot.database import mongo
+from bot.handlers import potd_handler
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -19,14 +20,17 @@ except RuntimeError:
     set_event_loop(new_event_loop())
     loop = get_event_loop()
 
-loop.run_until_complete((initialize_database()))
+loop.run_until_complete((mongo.initialize_database()))
 
 
 def add_handlers(application) -> None:
-    for command_name, handler in get_handlers().items():
-        application.add_handler(CommandHandler(command_name, handler))
+    application.add_handler(CommandHandler(
+        "register", potd_handler.register_player))
+    application.add_handler(CommandHandler(
+        "players", potd_handler.list_players))
 
 
 if __name__ == '__main__':
     application = ApplicationBuilder().token(config.TELEGRAM_TOKEN).build()
+    add_handlers(application)
     application.run_polling()

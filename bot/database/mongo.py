@@ -5,7 +5,7 @@ import beanie
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from bot import config
-from bot.database.potd import PersonOfTheDayGame
+from bot.services.potd import PersonOfTheDayGame
 
 
 async def initialize_database() -> None:

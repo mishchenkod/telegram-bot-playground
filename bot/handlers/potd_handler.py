@@ -2,8 +2,10 @@ from datetime import datetime, timezone
 from typing import List
 
 from telegram import Update
+from telegram.constants import ParseMode
 from telegram.ext import ContextTypes
 
+from bot.services import potd
 from bot.services.potd import PersonOfTheDayGame, PersonOfTheDayPlayer
 
 
@@ -15,19 +17,19 @@ async def register_player(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     """
     user = update.effective_user
     chat = update.effective_chat
-    potd_game = await PersonOfTheDayGame.get(chat.id)
-    if potd_game is None:
-        potd_game = PersonOfTheDayGame(id=chat.id, players=[], last_play_date=datetime.now(
+    game = await PersonOfTheDayGame.get(chat.id)
+    if game is None:
+        game = PersonOfTheDayGame(id=chat.id, players=[], last_play_date=datetime.now(
             timezone.utc), creation_date=datetime.now(timezone.utc))
-    if potd_game.has_player(user.id):
+    if potd.is_game_has_player(game, user.id):
         await update.message.reply_text(text='Ты уже в игре!')
         return
     else:
-        potd_game.players.append(
+        game.players.append(
             PersonOfTheDayPlayer.from_telegram_user(user=user))
-    await potd_game.save()
-    await context.bot.send_message(chat_id=update.effective_chat.id,
-                                   text=_format_registered_msg(potd_game))
+    await game.save()
+    await context.bot.send_message(chat_id=chat.id,
+                                   text=_format_registered_msg(game))
 
 
 async def list_players(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -35,23 +37,19 @@ async def list_players(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     Lists all players for the game in the current chat.
     """
     chat = update.effective_chat
-    potd_game = await PersonOfTheDayGame.get(chat.id)
-    if potd_game:
-        await context.bot.send_message(chat_id=update.effective_chat.id,
-                                       text='Участники игры в этом чате:\n' + _format_players_list(potd_game.get_player_list()))
+    game = await PersonOfTheDayGame.get(chat.id)
+    if game:
+        await context.bot.send_message(chat_id=chat.id,
+                                       text=potd.format_players_to_html_list(
+                                           game.players),
+                                       parse_mode=ParseMode.HTML)
     else:
-        await context.bot.send_message(chat_id=update.effective_chat.id,
+        await context.bot.send_message(chat_id=chat.id,
                                        text='В этом чате нет зарегистрированных участников!')
 
 
 def _format_registered_msg(potd_game: PersonOfTheDayGame) -> str:
     return "Ты зарегистрирован в игре! Участников игры в этом чате: {}".format(len(potd_game.players))
-
-
-# def _format_players_list(players: List[PersonOfTheDayPlayer]) -> str:
-
-#     formatted_players = "{}. {}".format(i + 1, player.get_name_for_mention()) for i, player in enumerate(players)
-#     return '\n'.join()
 
 
 # def stats_to_str(list):
