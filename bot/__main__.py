@@ -1,5 +1,6 @@
 """Bot starting, logging configuration and handlers registration"""
 import logging
+import traceback
 from asyncio import get_event_loop, new_event_loop, set_event_loop
 
 from telegram.ext import ApplicationBuilder, CommandHandler
@@ -23,17 +24,16 @@ except RuntimeError:
 loop.run_until_complete((mongo.initialize_database()))
 
 
-def add_handlers(app) -> None:
-    """
-    Add Telegram handlers
-    TODO: move to another package
-    """
-    app.add_handler(CommandHandler("register", potd_handler.register_player))
-    app.add_handler(CommandHandler("players", potd_handler.list_players))
-    app.add_handler(CommandHandler("play", potd_handler.play_game))
-
-
-if __name__ == "__main__":
+def main():
+    """Initialize bot"""
     application = ApplicationBuilder().token(config.TELEGRAM_TOKEN).build()
-    add_handlers(application)
+    application.add_handler(CommandHandler("register", potd_handler.register_player))
+    application.add_handler(CommandHandler("players", potd_handler.list_players))
+    application.add_handler(CommandHandler("play", potd_handler.play_game))
     application.run_polling()
+
+
+try:
+    main()
+except Exception:
+    logger.warning(traceback.format_exc())
