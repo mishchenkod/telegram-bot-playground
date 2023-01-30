@@ -1,3 +1,4 @@
+"""Environment variables and configuration constants"""
 from os import getenv
 
 from dotenv import load_dotenv
