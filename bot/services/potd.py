@@ -1,4 +1,5 @@
 """Person of the day game service"""
+import random
 import secrets
 from datetime import datetime, timezone
 from typing import Iterable, List, Optional
@@ -55,7 +56,8 @@ async def find_winner(game: PersonOfTheDayGame) -> PersonOfTheDayPlayer:
     """
     Finds game winner and updates last played date.
     """
-    winner = secrets.choice(game.players)
+    shuffled_players = random.sample(game.players, len(game.players))
+    winner = secrets.choice(shuffled_players)
     winner.wins_number += 1
     game.last_winner_id = winner.id
     game.last_play_date = datetime.now(timezone.utc)
