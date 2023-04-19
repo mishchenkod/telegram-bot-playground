@@ -30,7 +30,7 @@ services:
       - ME_CONFIG_MONGODB_ADMINPASSWORD=mongo
       - ME_CONFIG_MONGODB_URL=mongodb://mongo:mongo@mongo:27017/?authSource=admin
       - ME_CONFIG_BASICAUTH_USERNAME=mongo
-      - ME_CONFIG_BASICAUTH_PASSWORD=mongo
+      - ME_CONFIG_BASICAUTH_PASSWORD=LaHhkpURRK95Ayq1a6Mt
     restart: unless-stopped
     ports:
       - "8081:8081"
