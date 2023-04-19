@@ -1,9 +1,9 @@
 """Person of the day game service"""
+import secrets
 from datetime import datetime, timezone
 from typing import Iterable, List, Optional
 
 from beanie import Document
-from numpy import random
 from pydantic import BaseModel
 from telegram import User, helpers
 
@@ -55,7 +55,7 @@ async def find_winner(game: PersonOfTheDayGame) -> PersonOfTheDayPlayer:
     """
     Finds game winner and updates last played date.
     """
-    winner = random.choice(game.players)
+    winner = secrets.choice(game.players)
     winner.wins_number += 1
     game.last_winner_id = winner.id
     game.last_play_date = datetime.now(timezone.utc)
